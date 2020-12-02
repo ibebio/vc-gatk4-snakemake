@@ -1,0 +1,137 @@
+rule call_variants:
+    input:
+        bam="results/rmdup/{sample}.rmdup.bam"
+    output:
+        gvcf=temp("results/variants/gvcf/{sample}.g.vcf.gz"),
+    params:
+        index=config["ref"]["genome"],
+        java_options=config["variant_calling"]["java_options"],
+    threads: 4
+    resources:
+        n=4,
+        time=lambda wildcards, attempt: 48 * 59 * attempt,
+        mem_gb_pt=lambda wildcards, attempt: 12 * attempt
+    log:
+        "results/logs/call_variants/{sample}.log"
+    conda:
+        "../envs/gatk4.yaml"
+    shell:
+        """
+        gatk --java-options "{params.java_options}" HaplotypeCaller \
+            -ERC GVCF \
+            -R {params.index} \
+            -I {input.bam} \
+            -O {output.gvcf} 2> {log}
+        """
+
+
+
+rule combine_calls:
+    input:
+        gvcfs=expand("results/variants/gvcf/{sample}.g.vcf.gz", sample=samples.index)
+    output:
+        gvcf=temp("results/variants/gvcf/all.g.vcf.gz"),
+    params:
+        index=config["ref"]["genome"],
+        java_options=config["variant_calling"]["java_options"],
+    threads: 4
+    resources:
+        n=4,
+        time=lambda wildcards, attempt: 24 * 59 * attempt,
+        mem_gb_pt=lambda wildcards, attempt: 12 * attempt
+    log:
+        "results/logs/combine_calls/all.log"
+    conda:
+        "../envs/gatk4.yaml"
+    shell:
+        """
+        gatk --java-options "{params.java_options}" CombineGVCFs \
+            {input.gvcfs} \
+            -R {params.index} \
+            -O {output.gvcf} 2> {log}
+        """
+
+
+rule genotype_variants:
+    input:
+        gvcf="results/variants/gvcf/all.g.vcf.gz",
+    output:
+        vcf="results/variants/raw/all.vcf.gz",
+    params:
+        index=config["ref"]["genome"],
+        java_options=config["variant_calling"]["java_options"],
+    threads: 4
+    resources:
+        n=4,
+        time=lambda wildcards, attempt: 24 * 59 * attempt,
+        mem_gb_pt=lambda wildcards, attempt: 12 * attempt
+    log:
+        "results/logs/genotype_variants/all.log"
+    conda:
+        "../envs/gatk4.yaml"
+    shell:
+        """
+        gatk --java-options "{params.java_options}" GenotypeGVCFs \
+            -V {input.gvcf} \
+            -R {params.index} \
+            -O {output.vcf} 2> {log}
+        """
+
+
+
+
+
+rule filter_variants:
+    input:
+        vcf="results/variants/raw/all.vcf",
+    output:
+        snps=temp("results/variants/parental/raw/all.snps.vcf"),
+        indels=temp("results/variants/parental/raw/all.indels.vcf"),
+        filtered_snps=temp("results/variants/filtered/all.snps.vcf"),
+        filtered_indels=temp("results/variants/filtered/all.indels.vcf"),
+        filtered_vcf="results/variants/filtered/all.vcf",
+    params:
+        index=config["ref"]["genome"],
+        snp_filter=config["variant_filtering"]["snps_filter"],
+        indel_filter=config["variant_filtering"]["indels_filter"]
+    resources:
+        n=1,
+        time=lambda wildcards, attempt: 12 * 59 * attempt,
+        mem_gb_pt=lambda wildcards, attempt: 12 * attempt
+    log:
+        "results/logs/filter_variants/all.log"
+    conda:
+        "../envs/gatk4.yaml"
+    shell:
+        """
+        gatk SelectVariants \
+             -R {params.index} \
+             -V {input.vcf} \
+             --select-type-to-include SNP \
+             -O {output.snps} \
+        ; \
+        gatk VariantFiltration \
+             -R {params.index} \
+             -V {output.snps} \
+             --filter-name "snps-hard-filter" \
+             --filter-expression "{params.snp_filter}" \
+             -O {output.filtered_snps} \
+        ; \
+        gatk SelectVariants \
+             -R {params.index} \
+             -V {input.vcf} \
+             --select-type-to-include INDEL \
+             -O {output.indels} \
+        ; \
+        gatk VariantFiltration \
+             -R {params.index} \
+             -V {output.indels} \
+             --filter-name "indels-hard-filter" \
+             --filter-expression "{params.indel_filter}" \
+             -O {output.filtered_indels} \
+        ; \
+        picard MergeVcfs \
+               INPUT={output.filtered_snps} \
+               INPUT={output.filtered_indels} \
+               OUTPUT={output.filtered_vcf} 2> {log}
+        """

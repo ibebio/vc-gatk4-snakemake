@@ -1,6 +1,5 @@
 ############################################################
 # 1st STEP: CREATE .BAM FILES W/O DUPLICATES
-# FOR _ALL_ SAMPLES INVOLVED, PARENTAL AND F2
 ############################################################
 
 localrules: map_all

@@ -1,4 +1,4 @@
-# Snakemake workflow: TIGER analysis pipeline
+# Snakemake workflow: GATK variant calling using gVCFs and hard filtering
 
 
 
@@ -9,15 +9,9 @@
 Insert your code into the respective folders, i.e. `scripts`, `rules`, and `envs`. Define the entry point of the workflow in the `Snakefile` and the main configuration in the `config.yaml` file. -->
 
 ## Authors
-
-* Ulrich Lutz
 * Snakemake workflow: Ilja Bezrukov
 
 ## Usage
-
-<!-- If you use this workflow in a paper, don't forget to give credits to the authors by citing the URL of this (original) repository and, if available, its DOI (see above). -->
-If you use this workflow in a paper, don't forget to give credits to the authors of this pipeline and the authors of the 'GBS with sparse coverage using Trained Individual
-GenomE Reconstruction (TIGER)' workflow: https://www.g3journal.org/content/5/3/385.short
 ### Step 1: Obtain a copy of this workflow
 <!--
 1. Create a new github repository using this workflow [as a template](https://help.github.com/en/articles/creating-a-repository-from-a-template).
@@ -26,7 +20,7 @@ GenomE Reconstruction (TIGER)' workflow: https://www.g3journal.org/content/5/3/3
 -->
 Clone the repository into the place where you want to perform the data analysis. It is important to include the submodules:
 ```
-git clone --recursive https://github.com/ibebio/tiger-pipeline.git
+git clone --recursive https://github.com/ibebio/vc-gatk4-snakemake.git
 ```
 
 ### Step 2: Configure workflow
@@ -42,7 +36,7 @@ $ chmod u+x workflow/scripts/*.*
 
 Install Snakemake using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html):
 
-	conda create -c bioconda -c conda-forge -n snakemake snakemake">="5.21.0 python">="3.7
+	conda create -c bioconda -c conda-forge -n snakemake snakemake">="5.28.0 python">="3.7
 	
 For installation details, see the [instructions in the Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
