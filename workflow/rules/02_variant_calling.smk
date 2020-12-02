@@ -48,7 +48,7 @@ rule combine_calls:
     shell:
         """
         gatk --java-options "{params.java_options}" CombineGVCFs \
-            {input.gvcfs} \
+            -V $(echo "{input.gvcfs}" | sed 's/ / -V /g') \
             -R {params.index} \
             -O {output.gvcf} 2> {log}
         """
@@ -78,9 +78,6 @@ rule genotype_variants:
             -R {params.index} \
             -O {output.vcf} 2> {log}
         """
-
-
-
 
 
 rule filter_variants:
