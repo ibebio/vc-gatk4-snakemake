@@ -92,37 +92,38 @@ rule filter_variants:
     params:
         index=config["ref"]["genome"],
         snp_filter=config["variant_filtering"]["snps_filter"],
-        indel_filter=config["variant_filtering"]["indels_filter"]
+        indel_filter=config["variant_filtering"]["indels_filter"],
+        java_options=config["variant_calling"]["java_options"],
     resources:
         n=1,
         time=lambda wildcards, attempt: 12 * 59 * attempt,
-        mem_gb_pt=lambda wildcards, attempt: 12 * attempt
+        mem_gb_pt=lambda wildcards, attempt: 48 * attempt
     log:
         "results/logs/filter_variants/all.log"
     conda:
         "../envs/gatk4.yaml"
     shell:
         """
-        gatk SelectVariants \
+        gatk --java-options "{params.java_options}" SelectVariants \
              -R {params.index} \
              -V {input.vcf} \
              --select-type-to-include SNP \
              -O {output.snps} \
         ; \
-        gatk VariantFiltration \
+        gatk --java-options "{params.java_options}" VariantFiltration \
              -R {params.index} \
              -V {output.snps} \
              --filter-name "snps-hard-filter" \
              --filter-expression "{params.snp_filter}" \
              -O {output.filtered_snps} \
         ; \
-        gatk SelectVariants \
+        gatk --java-options "{params.java_options}" SelectVariants \
              -R {params.index} \
              -V {input.vcf} \
              --select-type-to-include INDEL \
              -O {output.indels} \
         ; \
-        gatk VariantFiltration \
+        gatk --java-options "{params.java_options}" VariantFiltration \
              -R {params.index} \
              -V {output.indels} \
              --filter-name "indels-hard-filter" \
