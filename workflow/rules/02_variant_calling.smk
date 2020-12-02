@@ -6,6 +6,7 @@ rule call_variants:
     params:
         index=config["ref"]["genome"],
         java_options=config["variant_calling"]["java_options"],
+        extra=config["variant_calling"]["extra"]
     threads: 4
     resources:
         n=4,
@@ -18,6 +19,7 @@ rule call_variants:
     shell:
         """
         gatk --java-options "{params.java_options}" HaplotypeCaller \
+            {params.extra} \
             -ERC GVCF \
             -R {params.index} \
             -I {input.bam} \

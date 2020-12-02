@@ -10,8 +10,9 @@ read_group:
   
 # Reference genome
 ref:
-  name: "TAIR-10"
-  genome: "/ebio/abt6_projects8/ath_somaclonal_variation/data/reference_genomes/Col-0/TAIR10/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa"
+  name: "EMOY2_2"
+  genome: "/ebio/abt6_projects9/pathodopsis_HpA_Effectors/data/references/HyaAraEmoy2_2.fa"
+  #genome: "/ebio/abt6_projects8/ath_somaclonal_variation/data/reference_genomes/Col-0/TAIR10/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa"
 
 
 # Trimming parameters
@@ -23,6 +24,10 @@ read_trimming:
 variant_calling:
   threads: 10
   java_options: "-Xmx24g -Xms24g"
+  extra: ""
+# Important: if you use PCR free libraries, adjust the following option
+# in the above variant_calling settings as follows:
+# extra: "--pcr-indel-model NONE"
 
 
 # Hard variant filtering parameters
