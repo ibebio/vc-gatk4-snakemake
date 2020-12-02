@@ -2,7 +2,7 @@
 
 
 
-[![Snakemake](https://img.shields.io/badge/snakemake-≥5.21.0-brightgreen.svg)](https://snakemake.bitbucket.io)
+[![Snakemake](https://img.shields.io/badge/snakemake-≥5.28.0-brightgreen.svg)](https://snakemake.bitbucket.io)
 [![Build Status](https://travis-ci.org/snakemake-workflows/tiger_analysis_pipeline.svg?branch=master)](https://travis-ci.org/snakemake-workflows/tiger_analysis_pipeline)
 
 <!-- This is the template for a new Snakemake workflow. Replace this text with a comprehensive description covering the purpose and domain.
@@ -20,7 +20,7 @@ Insert your code into the respective folders, i.e. `scripts`, `rules`, and `envs
 -->
 Clone the repository into the place where you want to perform the data analysis. It is important to include the submodules:
 ```
-git clone --recursive https://github.com/ibebio/vc-gatk4-snakemake.git
+git clone https://github.com/ibebio/vc-gatk4-snakemake.git
 ```
 
 ### Step 2: Configure workflow
