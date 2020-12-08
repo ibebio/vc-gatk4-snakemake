@@ -135,3 +135,46 @@ rule filter_variants:
                INPUT={output.filtered_indels} \
                OUTPUT={output.filtered_vcf} 2> {log}
         """
+
+
+rule extract_strict_biallelic_snps:
+    input:
+        vcf="results/variants/filtered/all.vcf"
+    output:
+        snps=temp("results/variants/filtered/biallelic-snps.raw.vcf"),
+        vcf="results/variants/filtered/biallelic-snps.vcf"
+    params:
+        index=config["ref"]["genome"],
+        filter=config["biallelic_snps"]["filter"],
+        allowed_missing_fraction=config["biallelic_snps"]["allowed_missing_fraction"],
+        java_options=config["variant_calling"]["java_options"]
+    resources:
+        n=1,
+        time=lambda wildcards, attempt: 12 * 59 * attempt,
+        mem_gb_pt=lambda wildcards, attempt: 48 * attempt
+    log:
+        "results/logs/extract_strict_biallelic_snps/all.log"
+    conda:
+        "../envs/gatk4.yaml"
+    shell:
+        """
+        gatk SelectVariants \
+             -R {params.index} \
+             -V {input.vcf} \
+             --exclude-filtered \
+             --select-type-to-include SNP \
+             --select-type-to-exclude INDEL \
+             --restrict-alleles-to BIALLELIC \
+             --max-nocall-fraction {params.allowed_missing_fraction} \
+             -O {output.snps}  2> {log} ;\
+        if [[ "{params.filter}" != "" ]] ; then \
+           gatk VariantFiltration \
+                -R {params.index} \
+                -V {output.snps} \
+                --filter-name "biallelic-snps-filter" \
+                --filter-expression "{params.filter}" \
+                -O {output.vcf} 2>> {log} \;
+        else \
+           cp {output.snps} {output.vcf} 2>> {log} ;\
+        fi
+        """

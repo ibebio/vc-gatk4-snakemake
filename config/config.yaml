@@ -35,5 +35,17 @@ variant_calling:
 #
 # The filter is not strict, and should be adapted as needed
 variant_filtering:
-  snps_filter: "QD < 5.0 || FS > 60.0 || MQ < 50.0 || MQRankSum < -12.5 || ReadPosRankSum < -8.0"
-  indels_filter: "QD < 5.0 || FS > 200.0 || ReadPosRankSum < -20.0"
+  snps_filter: "QD < 5.0 || FS > 60.0 || MQ < 50.0 || MQRankSum < -12.5 || ReadPosRankSum < -8.0 || SOR > 4.0"
+  indels_filter: "QD < 5.0 || FS > 200.0 || ReadPosRankSum < -20.0 || SOR > 10.0"
+
+
+# Additional parameters for biallelic SNP VCF
+biallelic_snps:
+  filter: ""
+  allowed_missing_fraction: 0.1
+
+
+# # Create fasta files for specific regions for each sample (e.g. effectors)
+# regions:
+#   - name: "ATR13"
+#     position: "scaffold_289:14483-15264"
