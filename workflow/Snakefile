@@ -10,9 +10,12 @@ include: "rules/common.smk"
 
 include: "rules/01_mapping.smk"
 include: "rules/02_variant_calling.smk"
+include: "rules/03_create_regions_fastas.smk"
 
 
 rule all:
     input:
         "results/variants/filtered/all.vcf",
-        "results/variants/filtered/biallelic-snps.vcf"
+        "results/variants/filtered/biallelic-snps.vcf",
+        get_region_fasta_filenames
+        

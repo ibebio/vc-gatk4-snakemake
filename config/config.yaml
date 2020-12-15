@@ -46,6 +46,6 @@ biallelic_snps:
 
 
 # # Create fasta files for specific regions for each sample (e.g. effectors)
-# regions:
-#   - name: "ATR13"
-#     position: "scaffold_289:14483-15264"
+regions:
+  - name: "ATR13"
+    position: "scaffold_289:14483-15264"

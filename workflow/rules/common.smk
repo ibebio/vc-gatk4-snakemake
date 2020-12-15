@@ -33,3 +33,12 @@ def get_all_mapped_files(wildcards):
     """ return the names of all rmdup files (output of 01_mapping.smk) """
     mapped_files = ['results/rmdup/{}.rmdup.bam'.format(s) for s in samples.index]
     return mapped_files
+
+
+def get_region_fasta_filenames(wildcards):
+    """ return the file names for all region fasta files """
+    region_fastas= []
+    for s in samples.index:
+        for r in config["regions"]:
+            region_fastas.append("results/region_fasta/{sample}.{region}.fasta".format(sample=s, region=r["name"]))
+    return region_fastas
