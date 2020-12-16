@@ -18,7 +18,7 @@ Insert your code into the respective folders, i.e. `scripts`, `rules`, and `envs
 2. [Clone](https://help.github.com/en/articles/cloning-a-repository) the newly created repository to your local system, into the place where you want to perform the data analysis.
 
 -->
-Clone the repository into the place where you want to perform the data analysis. It is important to include the submodules:
+Clone the repository into the place where you want to perform the data analysis.
 ```
 git clone https://github.com/ibebio/vc-gatk4-snakemake.git
 ```
@@ -115,10 +115,23 @@ in combination with any of the modes above.
 All output is stored in the `results/` subfolder.
 Logs for each step are stored in `logs/`.
 
-The `workflow/` folder contains the Snakemake files and scripts that are needed to run the workflow.
-It does not need to be changed unless the workflow has to be modifed.
+The pipeline produces the following outputs:
+#### Filtered variants
+`results/variants/filtered/all.vcf` contains SNPs and INDELs for all samples filtered
+according to the `variant_filtering` section in the config file.
+#### Biallelic SNPs
+`results/variants/filtered/biallelic-snps.vcf` contains only biallelic
+SNPs. Non-PASS variants are removed, and the requirement of a minimal
+missing fraction (default 0.1) is added. This variants are the basis
+for further analysis.
+#### FASTA files for specific regions for each sample
+The directory `results/region_fasta/` contains fasta nucleotid
+sequence files for specific regions, e.g. effectors. The files are
+generated for each sample separately, and contain the variants from
+the previous step (Biallelic SNPs) which are present in this
+samples. They are named `{sample}.{region}.fasta`. The regions are
+defined in the config file in the section `regions`.
 
-See the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/executable.html) for further details.
 
 <!--
 ### Step 5: Investigate results
@@ -147,7 +160,15 @@ Whenever you want to synchronize your workflow copy with bugfixes or new develop
 2. Obtain the updates from the Github repository: `git pull`
 3. Restore your modifications to the config files: `gut stash pop`
 
-The above steps assume that you did not modify any parts of the workflow, except the config files. If the config format has changed, you might need to update them.
+The above steps assume that you did not modify any parts of the
+workflow, except the config files. If the config format has changed,
+you might need to update them.
+
+The `workflow/` folder contains the Snakemake files and scripts that are needed to run the workflow.
+It does not need to be changed unless the workflow has to be modifed.
+
+See the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/executable.html) for further details.
+
 
 <!--
 1. Once, register the upstream repository in your local copy: `git remote add -f upstream git@github.com:snakemake-workflows/capture_mapping_pipeline.git` or `git remote add -f upstream https://github.com/snakemake-workflows/capture_mapping_pipeline.git` if you do not have setup ssh keys.
