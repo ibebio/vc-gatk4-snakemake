@@ -21,6 +21,8 @@ rule create_sample_vcf_from_biallelic:
              -R {params.index} \
              -V {input.vcf} \
 	     --sample-expressions {params.sample} \
+	     --remove-unused-alternates \
+	     --exclude-non-variants \
              -O {output.vcf}  2> {log}
         """
 
