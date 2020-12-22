@@ -49,5 +49,28 @@ rule create_region_fasta:
              -R {params.index} \
              -V {input.vcf} \
 	     -L {params.interval} \
-             -O {output.fasta}  2> {log} \
+             -O {output.fasta}  2> {log}
+        """
+
+rule create_region_reference_fasta:
+    input:
+        index=config["ref"]["genome"]
+    output:
+        fasta="results/region_fasta/{index_name}.{region}.fasta"
+    params:
+        index_name="{index_name}",
+	interval=lambda wildcards: "{position}".format(position=[c["position"] for c in config["regions"] if c["name"] == wildcards.region][0]),
+	region="{region}",
+	java_options=config["variant_calling"]["java_options"]
+    resources:
+        n=1,
+        time=lambda wildcards, attempt: 12 * 59 * attempt,
+        mem_gb_pt=lambda wildcards, attempt: 48 * attempt
+    log:
+        "results/logs/create_region_reference_fasta/{index_name}.{region}.log"
+    conda:
+        "../envs/global.yaml"
+    shell:
+        """
+	samtools faidx {input.index}  "{params.interval}" > {output.fasta} 2> {log}
         """

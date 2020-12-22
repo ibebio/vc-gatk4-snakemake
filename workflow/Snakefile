@@ -17,5 +17,6 @@ rule all:
     input:
         "results/variants/filtered/all.vcf",
         "results/variants/filtered/biallelic-snps.vcf",
-        get_region_fasta_filenames
+        get_region_fasta_filenames,
+        get_region_reference_fasta_filenames
         

@@ -19,7 +19,7 @@ samples.index.names = ["sample_id"]
 ##### Wildcard constraints #####
 wildcard_constraints:
     sample="|".join(samples.index),
-
+    index_name=config["ref"]["name"]
 ##### Helper functions #####
 def get_fastq(wildcards):
     """Get fastq files of given sample."""
@@ -37,8 +37,15 @@ def get_all_mapped_files(wildcards):
 
 def get_region_fasta_filenames(wildcards):
     """ return the file names for all region fasta files """
-    region_fastas= []
+    region_fastas = []
     for s in samples.index:
         for r in config["regions"]:
             region_fastas.append("results/region_fasta/{sample}.{region}.fasta".format(sample=s, region=r["name"]))
+    return region_fastas
+
+def get_region_reference_fasta_filenames(wildcards):
+    """ return the file names for the region reference fasta files, extracted from the genome """
+    region_fastas = []
+    for r in config["regions"]:
+        region_fastas.append("results/region_fasta/{index_name}.{region}.fasta".format(index_name=config["ref"]["name"], region=r["name"]))
     return region_fastas
