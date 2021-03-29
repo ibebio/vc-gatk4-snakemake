@@ -36,7 +36,7 @@ $ chmod u+x workflow/scripts/*.*
 
 Install Snakemake using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html):
 
-	conda create -c bioconda -c conda-forge -n snakemake snakemake">="5.28.0 python">="3.7
+	conda create -c bioconda -c conda-forge -n snakemake snakemake"=="5.28.0 python">="3.7
 	
 For installation details, see the [instructions in the Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
