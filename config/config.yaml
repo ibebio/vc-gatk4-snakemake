@@ -14,11 +14,6 @@ ref:
   genome: "/ebio/abt6_projects9/pathodopsis_HpA_Effectors/data/references/HyaAraEmoy2_2.fa"
   #genome: "/ebio/abt6_projects8/ath_somaclonal_variation/data/reference_genomes/Col-0/TAIR10/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa"
 
-
-# Trimming parameters
-read_trimming:
-  adapter: "CTGTCTCTTATA" # NEXTERA
-
   
 # Parental Variant calling parameters, no need to change this normally
 variant_calling:

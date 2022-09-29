@@ -7,30 +7,35 @@ localrules: map_all
 # Trim reads (PE-only)
 rule trim_reads:
     input:
-        unpack(get_fastq) # TODO ALL FASTQ'S, parental and f2
+        unpack(get_fastq)
     output:
         fq1=temp("results/trimmed/{sample}.R1.trimmed.fastq.gz"),
         fq2=temp("results/trimmed/{sample}.R2.trimmed.fastq.gz"),
     params:
-        adapter=config["read_trimming"]["adapter"]
-    threads: 1
+        output_dir="results/trimmed",
+        basename="{sample}"
+    threads: 4
     resources:
-        n=1,
+        n=4,
         time=lambda wildcards, attempt: 2 * 59 * attempt,
-        mem_gb_pt=lambda wildcards, attempt: 24 * attempt,
+        mem_gb_pt=lambda wildcards, attempt: 6 * attempt,
     log:
         "results/logs/trim_reads/{sample}.log"
     conda:
         "../envs/trim_reads.yaml"
     shell:
         """
-        cutadapt \
-        -a {params.adapter} \
-        -o {output.fq1} \
-        -p {output.fq2} \
-        {input}
-        2> {log}
+        trim_galore \
+        --cores {threads} \
+        --gzip \
+        --paired \
+        --output_dir {params.output_dir} \
+        --basename {params.basename} \
+        {input} 2> {log} ; \
+        mv {params.output_dir}/{params.basename}_val_1.fq.gz {output.fq1} ; \
+        mv {params.output_dir}/{params.basename}_val_2.fq.gz {output.fq2}
         """
+
 
 
 # Align to reference
